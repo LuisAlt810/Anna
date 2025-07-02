@@ -16,7 +16,7 @@ client.once('ready', () => {
 
   client.user.setPresence({
     activities: [{ name: 'Moderating with care 🌸 | 2', type: ActivityType.Playing }],
-    status: 'idle'
+    status: 'dnd'
   });
 });
 
