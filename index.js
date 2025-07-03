@@ -28,8 +28,8 @@ client.once("ready", () => {
     status: "dnd",
     activities: [
       {
-        name: "some beautiful flowers🌺🌹",
-        type: 3 // Watching
+        name: "the Guardian Music from The Legend of Zelda👑⭐️",
+        type: 2 // Lisenting to...
       }
     ]
   });
