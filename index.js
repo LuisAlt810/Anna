@@ -21,13 +21,6 @@ for (const file of commandFiles) {
   client.commands.set(command.data.name, command);
 }
 
-client.once('ready', () => {
-  console.log(`✅ Logged in as ${client.user.tag}`);
-  client.user.setPresence({
-    activities: [{ name: 'Verification System' }],
-    status: 'online',
-  });
-});
 
 client.on('interactionCreate', async (interaction) => {
   if (interaction.isChatInputCommand()) {
@@ -79,7 +72,7 @@ client.once("ready", () => {
   console.log(`✅ Anna the Guardian is online as ${client.user.tag}`);
   client.user.setPresence({
     status: "online",
-    activities: [{ name: "your server 👀", type: 3 }], // Watching
+    activities: [{ name: "Zelda Games⚔️", type: 3 }], // Watching
   });
 });
 
