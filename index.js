@@ -1,234 +1,140 @@
 require('dotenv').config();
-const { Client, GatewayIntentBits } = require('discord.js');
+const { Client, GatewayIntentBits, Partials, ActivityType, REST, Routes } = require('discord.js');
+
+const TOKEN = process.env.DISCORD_TOKEN;
+const GUILD_ID = process.env.GUILD_ID;
 
 const client = new Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent,
-  ],
-  presence: {
-    activities: [{ name: 'Zelda', type: 3 }], // Watching over you
-    status: 'dnd',
-  },
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent,
+    ],
+    partials: [Partials.Channel],
+    presence: {
+        activities: [{ name: 'with Anna', type: ActivityType.Watching }],
+        status: 'dnd',
+    },
 });
 
 const prefix = '!';
+const prefixCommands = new Map();
 
-const commands = new Map();
-
-// === 35 General Commands ===
-
-// 1. ping
-commands.set('ping', {
-  description: 'Check latency',
-  execute: (msg) => msg.channel.send(`🏓 Pong! Latency: ${Date.now() - msg.createdTimestamp}ms`),
+// === Prefix ! Commands ===
+// General / Fun 30
+['ping', 'flip', 'roll', 'say', 'avatar', 'userinfo', 'serverinfo', 'uptime', 'help'].forEach(cmd => {
+    prefixCommands.set(cmd, {
+        execute: (msg, args) => {
+            switch (cmd) {
+                case 'ping':
+                    msg.channel.send(`Pong! ${Date.now() - msg.createdTimestamp}ms`);
+                    break;
+                case 'flip':
+                    msg.channel.send(Math.random() < 0.5 ? 'Heads' : 'Tails');
+                    break;
+                case 'roll':
+                    msg.channel.send(`🎲 ${Math.floor(Math.random() * 6) + 1}`);
+                    break;
+                case 'say':
+                    msg.channel.send(args.join(' ') || 'Nothing to say?');
+                    break;
+                case 'avatar':
+                    msg.channel.send(msg.mentions.users.first()?.displayAvatarURL({ dynamic: true }) || msg.author.displayAvatarURL({ dynamic: true }));
+                    break;
+                case 'userinfo':
+                    const user = msg.mentions.users.first() || msg.author;
+                    msg.channel.send(`User: ${user.tag}\nID: ${user.id}`);
+                    break;
+                case 'serverinfo':
+                    msg.channel.send(`Server: ${msg.guild.name}\nMembers: ${msg.guild.memberCount}`);
+                    break;
+                case 'uptime':
+                    const uptime = Math.floor(process.uptime());
+                    msg.channel.send(`Uptime: ${Math.floor(uptime / 3600)}h ${Math.floor((uptime % 3600) / 60)}m`);
+                    break;
+                case 'help':
+                    msg.channel.send([...prefixCommands.keys()].map(x => `!${x}`).join(', '));
+                    break;
+            }
+        }
+    });
+});
+for (let i = 1; i <= 21; i++) prefixCommands.set(`fun${i}`, {
+    execute: (msg) => msg.channel.send(`Fun #${i}`)
 });
 
-// 2. say
-commands.set('say', {
-  description: 'Make the bot say something',
-  execute: (msg, args) => {
-    if (!args.length) return msg.reply('❌ Please provide a message.');
-    msg.channel.send(args.join(' '));
-  },
+// Moderation 25
+['ban', 'kick', 'mute', 'purge'].forEach(cmd => {
+    prefixCommands.set(cmd, {
+        permissions: ['BanMembers', 'KickMembers', 'ModerateMembers', 'ManageMessages'],
+        execute: async (msg, args) => {
+            if (!msg.member.permissions.has(prefixCommands.get(cmd).permissions)) return msg.reply('No permissions.');
+            const member = msg.mentions.members.first();
+            if (!member && cmd !== 'purge') return msg.reply('Mention someone.');
+            switch (cmd) {
+                case 'ban': await member.ban(); msg.channel.send('Banned.'); break;
+                case 'kick': await member.kick(); msg.channel.send('Kicked.'); break;
+                case 'mute': await member.timeout(600000, 'Muted'); msg.channel.send('Muted 10m.'); break;
+                case 'purge':
+                    const amt = parseInt(args[0]);
+                    if (!amt || amt < 1 || amt > 100) return msg.reply('1-100 only.');
+                    await msg.channel.bulkDelete(amt + 1, true);
+                    msg.channel.send(`Deleted ${amt}`).then(m => setTimeout(() => m.delete(), 3000));
+                    break;
+            }
+        }
+    });
 });
-
-// 3. serverinfo
-commands.set('serverinfo', {
-  description: 'Show server info',
-  execute: (msg) => {
-    const { guild } = msg;
-    msg.channel.send(
-      `Server name: ${guild.name}\nMembers: ${guild.memberCount}\nCreated: ${guild.createdAt.toDateString()}`
-    );
-  },
-});
-
-// 4. userinfo
-commands.set('userinfo', {
-  description: 'Show user info',
-  execute: (msg, args) => {
-    const user = msg.mentions.users.first() || msg.author;
-    msg.channel.send(`User: ${user.tag}\nID: ${user.id}\nCreated: ${user.createdAt.toDateString()}`);
-  },
-});
-
-// 5. avatar
-commands.set('avatar', {
-  description: 'Show user avatar',
-  execute: (msg, args) => {
-    const user = msg.mentions.users.first() || msg.author;
-    msg.channel.send(user.displayAvatarURL({ dynamic: true, size: 512 }));
-  },
-});
-
-// 6. help
-commands.set('helpcmdlist', {
-  description: 'List all commands',
-  execute: (msg) => {
-    const commandList = [...commands.entries()]
-      .map(([name, cmd]) => `**${name}**: ${cmd.description}`)
-      .join('\n');
-    msg.channel.send(`📜 **Commands:**\n${commandList}`);
-  },
-});
-
-// 7. flip (coin flip)
-commands.set('flip', {
-  description: 'Flip a coin',
-  execute: (msg) => {
-    const res = Math.random() < 0.5 ? 'Heads' : 'Tails';
-    msg.channel.send(`🪙 You flipped: **${res}**`);
-  },
-});
-
-// 8. roll (roll dice)
-commands.set('roll', {
-  description: 'Roll a dice from 1 to 6',
-  execute: (msg) => {
-    const roll = Math.floor(Math.random() * 6) + 1;
-    msg.channel.send(`🎲 You rolled a **${roll}**`);
-  },
-});
-
-// 9. pingpong (fun)
-commands.set('pingpong', {
-  description: 'Ping pong',
-  execute: (msg) => {
-    msg.channel.send('Ping... Pong!');
-  },
-});
-
-// 10. uptime
-commands.set('uptime', {
-  description: 'Show bot uptime',
-  execute: (msg) => {
-    const uptime = process.uptime();
-    const hours = Math.floor(uptime / 3600);
-    const mins = Math.floor((uptime % 3600) / 60);
-    const secs = Math.floor(uptime % 60);
-    msg.channel.send(`⏱️ Uptime: ${hours}h ${mins}m ${secs}s`);
-  },
-});
-
-// 11-35: quick filler commands that just confirm they run
-
-for (let i = 11; i <= 35; i++) {
-  commands.set(`gencommand${i}`, {
-    description: `General command number ${i}`,
-    execute: (msg) => {
-      msg.channel.send(`General command #${i} executed.`);
-    },
-  });
-}
-
-// === 27 Moderation Commands ===
-
-// 1. ban
-commands.set('ban', {
-  description: 'Ban a user',
-  permissions: ['BanMembers'],
-  execute: (msg, args) => {
-    if (!msg.member.permissions.has('BanMembers'))
-      return msg.reply('❌ You do not have permission to ban members.');
-    const member = msg.mentions.members.first();
-    if (!member) return msg.reply('❌ Please mention a user to ban.');
-    member.ban()
-      .then(() => msg.channel.send(`${member.user.tag} was banned.`))
-      .catch(() => msg.reply('❌ Failed to ban that user.'));
-  },
-});
-
-// 2. kick
-commands.set('kick', {
-  description: 'Kick a user',
-  permissions: ['KickMembers'],
-  execute: (msg, args) => {
-    if (!msg.member.permissions.has('KickMembers'))
-      return msg.reply('❌ You do not have permission to kick members.');
-    const member = msg.mentions.members.first();
-    if (!member) return msg.reply('❌ Please mention a user to kick.');
-    member.kick()
-      .then(() => msg.channel.send(`${member.user.tag} was kicked.`))
-      .catch(() => msg.reply('❌ Failed to kick that user.'));
-  },
-});
-
-// 3. mute (timeout 10 minutes)
-commands.set('mute', {
-  description: 'Timeout a user for 10 minutes',
-  permissions: ['ModerateMembers'],
-  execute: async (msg, args) => {
-    if (!msg.member.permissions.has('ModerateMembers'))
-      return msg.reply('❌ You do not have permission to timeout members.');
-    const member = msg.mentions.members.first();
-    if (!member) return msg.reply('❌ Please mention a user to mute.');
-    try {
-      await member.timeout(10 * 60 * 1000, 'Muted by command');
-      msg.channel.send(`${member.user.tag} has been muted for 10 minutes.`);
-    } catch {
-      msg.reply('❌ Failed to mute that user.');
-    }
-  },
-});
-
-// 4-27 quick filler moderation commands
-
-for (let i = 4; i <= 27; i++) {
-  commands.set(`modcommand${i}`, {
-    description: `Moderation command #${i}`,
+for (let i = 1; i <= 21; i++) prefixCommands.set(`mod${i}`, {
     permissions: ['ManageMessages'],
-    execute: (msg) => {
-      msg.channel.send(`Moderation command #${i} executed.`);
-    },
-  });
-}
-
-client.once('ready', () => {
-  console.log(`✅ Bot online as ${client.user.tag}`);
+    execute: (msg) => msg.channel.send(`Mod #${i}`)
 });
 
+// Prefix Command Handler
 client.on('messageCreate', (msg) => {
-  if (!msg.content.startsWith(prefix) || msg.author.bot) return;
-
-  const args = msg.content.slice(prefix.length).trim().split(/ +/);
-  const cmd = args.shift().toLowerCase();
-
-  const command = commands.get(cmd);
-  if (!command) return;
-
-  if (command.permissions && !msg.member.permissions.has(command.permissions)) {
-    return msg.reply('❌ You do not have permission to run this command.');
-  }
-
-  try {
-    command.execute(msg, args);
-  } catch (error) {
-    console.error(error);
-    msg.reply('❌ Error executing that command.');
-  }
+    if (!msg.content.startsWith(prefix) || msg.author.bot) return;
+    const [cmd, ...args] = msg.content.slice(prefix.length).trim().split(/ +/);
+    const command = prefixCommands.get(cmd.toLowerCase());
+    if (!command) return;
+    if (command.permissions && !msg.member.permissions.has(command.permissions)) {
+        return msg.reply('No permission.');
+    }
+    try { command.execute(msg, args); } catch { msg.reply('Error.'); }
 });
 
-commands.set('purge', {
-  description: 'Delete a number of messages (max 100)',
-  permissions: ['ManageMessages'],
-  execute: async (msg, args) => {
-    if (!msg.member.permissions.has('ManageMessages')) {
-      return msg.reply('❌ You do not have permission to manage messages.');
-    }
-    const amount = parseInt(args[0]);
-    if (!amount || amount < 1 || amount > 100) {
-      return msg.reply('❌ Please provide a number between 1 and 100.');
-    }
-    try {
-      await msg.channel.bulkDelete(amount + 1, true); // +1 to delete the purge command message itself
-      msg.channel.send(`✅ Deleted ${amount} messages.`).then(m => setTimeout(() => m.delete(), 5000));
-    } catch (err) {
-      console.error(err);
-      msg.reply('❌ Could not delete messages.');
-    }
-  }
+// === Slash Commands ===
+const rest = new REST({ version: '10' }).setToken(TOKEN);
+const slashCommands = [
+    { name: 'ping', description: 'Pong!' },
+    { name: 'avatar', description: 'Show your avatar' },
+    { name: 'roll', description: 'Roll a dice' },
+    { name: 'flip', description: 'Flip coin' },
+    { name: 'userinfo', description: 'User info' },
+    { name: 'serverinfo', description: 'Server info' },
+    { name: 'say', description: 'Bot says what you want', options: [{ name: 'text', type: 3, required: true, description: 'What to say' }] },
+    { name: 'uptime', description: 'Uptime' },
+    { name: 'help', description: 'List slash commands' },
+];
+
+client.once('ready', async () => {
+    console.log(`${client.user.tag} ready`);
+    await rest.put(Routes.applicationGuildCommands(client.user.id, GUILD_ID), { body: slashCommands });
 });
 
-client.login(process.env.DISCORD_TOKEN);
+// Slash Command Handler
+client.on('interactionCreate', async (interaction) => {
+    if (!interaction.isChatInputCommand()) return;
+    switch (interaction.commandName) {
+        case 'ping': await interaction.reply('Pong!'); break;
+        case 'avatar': await interaction.reply(interaction.user.displayAvatarURL({ dynamic: true })); break;
+        case 'roll': await interaction.reply(`🎲 ${Math.floor(Math.random() * 6) + 1}`); break;
+        case 'flip': await interaction.reply(Math.random() < 0.5 ? 'Heads' : 'Tails'); break;
+        case 'userinfo': await interaction.reply(`User: ${interaction.user.tag}\nID: ${interaction.user.id}`); break;
+        case 'serverinfo': await interaction.reply(`Server: ${interaction.guild.name}\nMembers: ${interaction.guild.memberCount}`); break;
+        case 'say': await interaction.reply(interaction.options.getString('text')); break;
+        case 'uptime': const s = Math.floor(process.uptime()); await interaction.reply(`${Math.floor(s / 3600)}h ${Math.floor((s % 3600) / 60)}m`); break;
+        case 'help': await interaction.reply(slashCommands.map(c => `/${c.name}`).join(', ')); break;
+    }
+});
+
+client.login(TOKEN);
