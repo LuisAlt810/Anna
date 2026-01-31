@@ -1,0 +1,79 @@
+body {
+  background: #0e0e11;
+  font-family: system-ui, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.discord-card {
+  width: 360px;
+  background: #1e1f26;
+  border-radius: 18px;
+  box-shadow: 0 20px 50px rgba(0,0,0,.6);
+  padding: 18px;
+  color: white;
+}
+
+.header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.header img {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+}
+
+.members {
+  max-height: 260px;
+  overflow-y: auto;
+  margin-bottom: 15px;
+}
+
+.member {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px;
+  border-radius: 10px;
+}
+
+.member:hover {
+  background: rgba(255,255,255,.05);
+}
+
+.member img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+.status {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.online { background: #23a55a; }
+.idle { background: #f0b232; }
+.dnd { background: #f23f43; }
+
+.join-btn {
+  display: block;
+  text-align: center;
+  padding: 12px;
+  border-radius: 12px;
+  background: #5865f2;
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.join-btn:hover {
+  background: #4752c4;
+}
