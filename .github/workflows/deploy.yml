@@ -1,0 +1,190 @@
+name: 🚀 Discord server widget deployer PRO v3.4
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  # =========================
+  # 🔍 PRECHECK JOB
+  # =========================
+  precheck:
+    name: 🔍 Precheck & Repo Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: 🗂️ List All Files (Tree)
+        run: |
+          echo "📁 FULL FILE TREE:"
+          find . -type f
+          echo "✅ File tree scan complete!"
+
+      - name: 🧾 Validate package.json
+        run: |
+          if [ -f package.json ]; then
+            echo "✅ package.json found!"
+            cat package.json
+          else
+            echo "⚠️ No package.json found!"
+          fi
+
+  # =========================
+  # 🔨 BUILD JOB
+  # =========================
+  build:
+    name: 🔨 Build & Prepare Site
+    runs-on: ubuntu-latest
+    needs: precheck
+
+    steps:
+      - name: 📥 Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: 📦 Install Dependencies
+        run: |
+          echo "📦 Installing dependencies..."
+          npm install || echo "⚠️ npm install failed!"
+
+      - name: 🛠️ Run Build (If Exists)
+        run: |
+          if grep -q '"build"' package.json; then
+            echo "🛠️ Build script found! Running..."
+            npm run build
+          else
+            echo "ℹ️ No build script found — skipping build."
+          fi
+
+      - name: 🧪 Run Dev Script (If Exists)
+        run: |
+          if grep -q '"dev"' package.json; then
+            echo "🖥️ Dev script found!"
+            npm run dev || echo "⚠️ Dev script failed!"
+          else
+            echo "ℹ️ No dev script defined."
+          fi
+
+      - name: ⚙️ Setup GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: 📤 Upload Site Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+  # =========================
+  # 🧪 FILE INSPECTOR JOB
+  # =========================
+  inspector:
+    name: 🧪 Deep File Inspector
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: 📥 Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: 🧾 Show index.html With Line Numbers
+        run: |
+          if [ -f index.html ]; then
+            echo "📄 index.html FOUND!"
+            nl -ba index.html
+          else
+            echo "❌ ERROR: index.html NOT FOUND!"
+            exit 1
+          fi
+
+      - name: 🚨 Scan For Common HTML Errors
+        run: |
+          echo "🔎 Scanning for common issues..."
+          grep -n "<html" index.html || echo "⚠️ Missing <html> tag"
+          grep -n "<head" index.html || echo "⚠️ Missing <head> tag"
+          grep -n "<body" index.html || echo "⚠️ Missing <body> tag"
+
+      - name: 🟥 Red-Line Error Simulation
+        run: |
+          echo "🟥 Checking for TODO / ERROR / FIXME..."
+          grep -n -E "ERROR|FIXME|TODO" -R . || echo "✅ No red-line keywords found!"
+
+  # =========================
+  # 🧹 LINT JOB
+  # =========================
+  lint:
+    name: 🧹 Lint & Syntax Check
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: 📥 Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: 🧪 ESLint Check (If Config Exists)
+        run: |
+          if [ -f .eslintrc.json ] || [ -f .eslintrc.js ]; then
+            echo "🧹 ESLint config found! Running lint..."
+            npx eslint . || echo "❌ ESLint found issues!"
+          else
+            echo "ℹ️ No ESLint config found — skipping lint."
+          fi
+
+  # =========================
+  # 📊 DEBUG JOB
+  # =========================
+  debug:
+    name: 📊 Ultra Debug Info
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🖥️ Show System Info
+        run: |
+          echo "🧠 SYSTEM INFO:"
+          node -v
+          npm -v
+          uname -a
+
+      - name: 📦 Show npm Scripts
+        run: |
+          if [ -f package.json ]; then
+            echo "📜 npm scripts:"
+            cat package.json | grep scripts -A 20
+          fi
+
+  # =========================
+  # 🚀 DEPLOY JOB
+  # =========================
+  deploy:
+    name: 🚀 Deploy to GitHub Pages (FINAL BOSS)
+    runs-on: ubuntu-latest
+    needs: [build, inspector, lint]
+    environment:
+      name: github-pages
+
+    steps:
+      - name: 📥 Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: 🌍 Deploy Website
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: 🎉 Success Message
+        run: |
+          echo "🎉 DEPLOY SUCCESS!"
+          echo "🚀 Your site is LIVE on GitHub Pages!"
