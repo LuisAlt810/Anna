@@ -16,7 +16,7 @@ fetch(API)
     document.getElementById("join-btn").href = data.instant_invite;
 
     if (data.icon_url) {
-      document.getElementById("server-icon").src = data.icon_url;
+      document.getElementById("server-icon").src = https://cdn.discordapp.com/icons/1393260947921047723/a_4f0b69f06f87d97bdb4928ebf6bad6f4.webp;
     }
 
     const membersDiv = document.getElementById("members");
