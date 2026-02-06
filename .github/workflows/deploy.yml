@@ -137,7 +137,7 @@ jobs:
 
       - name: 🧪 ESLint Check (If Config Exists)
         run: |
-          if [ -f .eslintrc.json ] || [ -f .eslintrc.js ]; then
+          if [ -f eslintrc.config.json ] || [ -f .eslintrc.js ]; then
             echo "🧹 ESLint config found! Running lint..."
             npx eslint . || echo "❌ ESLint found issues!"
           else
