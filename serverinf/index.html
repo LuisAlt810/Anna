@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Incredibox Community</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+/* ---------- GLOBAL ---------- */
+* {
+  box-sizing: border-box;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+  margin: 0;
+  background: linear-gradient(135deg, #0f172a, #020617);
+  color: #fff;
+  overflow-x: hidden;
+}
+
+/* ---------- ANIMATIONS ---------- */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+/* ---------- HERO ---------- */
+.hero {
+  min-height: 100vh;
+  padding: 60px 20px;
+  text-align: center;
+  animation: fadeUp 1.5s ease;
+}
+
+.hero h1 {
+  font-size: 2.6rem;
+  margin-bottom: 15px;
+}
+
+.hero p {
+  max-width: 800px;
+  margin: auto;
+  line-height: 1.7;
+  opacity: 0.9;
+}
+
+/* ---------- JOIN BUTTON ---------- */
+.join-btn {
+  margin-top: 40px;
+  padding: 16px 40px;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  background: linear-gradient(90deg, #22d3ee, #38bdf8);
+  color: #020617;
+  animation: pulse 3s infinite;
+  transition: all 0.4s ease;
+}
+
+.join-btn:hover {
+  transform: scale(1.1);
+}
+
+/* ---------- ADMIN ---------- */
+.admin-panel {
+  background: #020617;
+  padding: 40px 20px;
+}
+
+.admin-box {
+  max-width: 500px;
+  margin: auto;
+  background: #0f172a;
+  padding: 25px;
+  border-radius: 12px;
+  animation: fadeUp 1.2s ease;
+}
+
+.admin-box h2 {
+  text-align: center;
+}
+
+input, button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  border-radius: 8px;
+  border: none;
+}
+
+input {
+  background: #020617;
+  color: white;
+}
+
+.admin-btn {
+  background: #38bdf8;
+  color: #020617;
+  cursor: pointer;
+}
+
+.email-list {
+  margin-top: 20px;
+  font-size: 0.9rem;
+}
+
+.email-item {
+  background: #020617;
+  padding: 8px;
+  margin-top: 6px;
+  border-radius: 6px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- ---------- HERO SECTION ---------- -->
+<section class="hero">
+  <h1>🎵✨ Incredibox Community Server ✨🎵</h1>
+  <p>
+    A creative hub for fans, modders, artists, and music lovers.
+    Share your vibes, meet legendary creators, join events, and
+    celebrate sound together. 🎧🌈
+  </p>
+
+  <button class="join-btn" onclick="joinDiscord()">Join the Discord 🎶</button>
+
+  <p style="margin-top:30px; opacity:0.7;">
+    Writer & Designer: <b>Luisthegoat7301</b><br>
+    Server Owner: <b>zelda_life</b>
+  </p>
+</section>
+
+<!-- ---------- ADMIN PANEL ---------- -->
+<section class="admin-panel">
+  <div class="admin-box" id="loginBox">
+    <h2>🔐 Admin Login</h2>
+    <input type="text" id="adminUser" placeholder="Username">
+    <input type="password" id="adminPass" placeholder="Password">
+    <button class="admin-btn" onclick="login()">Login</button>
+  </div>
+
+  <div class="admin-box" id="panelBox" style="display:none;">
+    <h2>📧 Invite Panel</h2>
+    <input type="email" id="inviteEmail" placeholder="User email">
+    <button class="admin-btn" onclick="addEmail()">Add Invite</button>
+
+    <div class="email-list" id="emailList"></div>
+  </div>
+</section>
+
+<script>
+/* ---------- DISCORD REDIRECT ---------- */
+function joinDiscord() {
+  document.body.style.opacity = "0.6";
+  setTimeout(() => {
+    window.location.href =
+      "https://discord.gg/incredibox?invitedlink=luisdiko14-lab?github";
+  }, 1200);
+}
+
+/* ---------- ADMIN AUTH ---------- */
+const ADMIN_USER = "Admin!1";
+const ADMIN_PASS = "gitLuis8bitIncredibox%&2";
+
+function login() {
+  const u = document.getElementById("adminUser").value;
+  const p = document.getElementById("adminPass").value;
+
+  if (u === ADMIN_USER && p === ADMIN_PASS) {
+    document.getElementById("loginBox").style.display = "none";
+    document.getElementById("panelBox").style.display = "block";
+    loadEmails();
+  } else {
+    alert("❌ Invalid admin credentials");
+  }
+}
+
+/* ---------- EMAIL STORAGE ---------- */
+function getEmails() {
+  return JSON.parse(localStorage.getItem("invites") || "[]");
+}
+
+function saveEmails(list) {
+  localStorage.setItem("invites", JSON.stringify(list));
+}
+
+function addEmail() {
+  const email = document.getElementById("inviteEmail").value;
+  if (!email) return;
+
+  const list = getEmails();
+  list.push(email);
+  saveEmails(list);
+  document.getElementById("inviteEmail").value = "";
+  loadEmails();
+}
+
+function loadEmails() {
+  const list = getEmails();
+  const box = document.getElementById("emailList");
+  box.innerHTML = "<h4>Invited Users:</h4>";
+
+  list.forEach(e => {
+    const div = document.createElement("div");
+    div.className = "email-item";
+    div.textContent = e;
+    box.appendChild(div);
+  });
+}
+</script>
+
+</body>
+</html>
