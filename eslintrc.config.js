@@ -1,0 +1,23 @@
+export default {
+  env: {
+    node: true,
+    es2022: true
+  },
+  extends: [
+    'eslint:recommended'
+  ],
+  parserOptions: {
+    ecmaVersion: 2022,
+    sourceType: 'module'
+  },
+  rules: {
+    'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+    'no-console': 'off',
+    semi: ['error', 'always'],
+    quotes: ['error', 'single'],
+    indent: ['error', 2],
+    'comma-dangle': ['error', 'never'],
+    eqeqeq: ['error', 'always'],
+    curly: ['error', 'all']
+  }
+};
