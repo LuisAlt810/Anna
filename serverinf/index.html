@@ -63,13 +63,42 @@
   .bar:nth-child(5){animation-delay:0.6s;height:62%}
   @keyframes bounce{0%{transform:scaleY(0.3)}40%{transform:scaleY(1)}80%{transform:scaleY(0.5)}100%{transform:scaleY(0.35)}}
 
-  /* join button */
+  /* join button styles */
   .join-row{margin-top:20px;display:flex;gap:12px;align-items:center}
+  
   .join-btn{
-    padding:12px 26px;border-radius:999px;border:none;background:linear-gradient(90deg,var(--accent1),var(--accent2));
-    color:#021025;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;
+    padding:12px 26px;
+    border-radius:999px;
+    border:none;
+    background:linear-gradient(90deg,var(--accent1),var(--accent2));
+    color:#021025;
+    font-weight:700;
+    cursor:pointer;
+    text-decoration:none;
+    display:inline-flex;
+    align-items:center;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+    overflow: hidden;
   }
-  .join-btn:hover{transform:translateY(-3px);transition:transform .18s}
+  
+  .join-btn:hover{transform:translateY(-3px); box-shadow: 0 4px 12px rgba(34, 211, 238, 0.3);}
+
+  /* New Loading Animation Styles */
+  .join-btn.processing {
+    cursor: wait;
+    pointer-events: none; /* Prevent clicking while loading */
+    background: linear-gradient(90deg, var(--accent2), var(--accent1), #fff, var(--accent1), var(--accent2));
+    background-size: 300% 100%;
+    animation: shimmer 1.5s infinite linear;
+    color: rgba(2, 16, 37, 0.8);
+    box-shadow: 0 0 15px var(--accent1);
+  }
+
+  @keyframes shimmer {
+    0% { background-position: 100% 0; }
+    100% { background-position: -100% 0; }
+  }
 
   .tiny{font-size:0.88rem;color:var(--muted)}
 
@@ -116,12 +145,10 @@
 
 <div class="wrap">
   <div class="grid">
-    <!-- LEFT -->
     <div class="card">
       <div class="title">🎵✨ Welcome to the Incredibox Community Server! ✨🎵</div>
       <div class="subtitle">Are you a fan of Incredibox? Then you’ve just found your new favorite place to hang out! 😎🎧</div>
 
-      <!-- disco lights -->
       <div class="disco" aria-hidden="true">
         <div class="light l1"></div>
         <div class="light l2"></div>
@@ -145,7 +172,6 @@ Staff Team: ♢ 8-BitBowserJr7432 ✨, TotallyNotLuis… , .𖥔 ݁ ˖Ciber-lotl
 Feel free to DM luisthegoat7301 (always active) or zelda_life !
       </div>
 
-      <!-- music bars -->
       <div class="bars" aria-hidden="true" style="margin-top:18px">
         <div class="bar"></div>
         <div class="bar"></div>
@@ -155,9 +181,8 @@ Feel free to DM luisthegoat7301 (always active) or zelda_life !
       </div>
 
       <div class="join-row">
-        <!-- join opens new tab, no loader tied to this button -->
         <a class="join-btn" id="joinBtn" href="https://discord.gg/incredibox?invitedlink=luisdiko14-lab?github" target="_blank" rel="noopener noreferrer">Join the Discord 🎶</a>
-        <div class="tiny">Opens Discord invite in a new tab (no page loader).</div>
+        <div class="tiny" id="btnStatus">Secure Invite Protocol</div>
       </div>
 
       <div style="margin-top:14px" class="muted">
@@ -165,14 +190,12 @@ Feel free to DM luisthegoat7301 (always active) or zelda_life !
       </div>
     </div>
 
-    <!-- RIGHT -->
     <aside>
       <div class="panel card">
         <h3>🔒 Admin Panel (Read-Only)</h3>
         <div class="label">Invited Users (display only)</div>
         <div class="list" id="inviteList" aria-live="polite">
-          <!-- filled by JS; sample entries if none -->
-        </div>
+          </div>
         <div class="readonly-note">This is intentionally non-editable: no inputs, no password fields, no modifications. To manage invites securely, use a backend (I can add one).</div>
       </div>
 
@@ -207,7 +230,6 @@ Vaporwave Mew
   </div>
 </div>
 
-<!-- OVERLAY: page-load loader -->
 <div id="overlay" class="overlay" aria-hidden="true" style="display:flex">
   <div class="loader" role="dialog" aria-modal="true" aria-label="Loading page">
     <div class="loader-title">Preparing your Incredibox experience…</div>
@@ -215,8 +237,7 @@ Vaporwave Mew
     <div class="loader-sub">Hang tight — getting everything in sync ✨</div>
 
     <div class="terminal" id="terminal" aria-live="polite">
-      <!-- lines appended by JS -->
-    </div>
+      </div>
 
     <div class="progress" aria-hidden="true"><i id="progressBar"></i></div>
     <div class="fallback" style="margin-top:10px">If loading stalls, <a class="fallback-link" href="#" id="skipBtn">click here to continue</a>.</div>
@@ -332,6 +353,38 @@ Vaporwave Mew
   document.addEventListener('DOMContentLoaded', () => {
     // slight initial delay so page assets paint first (feels smoother)
     setTimeout(startLoader, 220);
+
+    // ------------- NEW BUTTON LOGIC -------------
+    const joinBtn = document.getElementById('joinBtn');
+    const btnStatus = document.getElementById('btnStatus');
+    
+    if(joinBtn) {
+      joinBtn.addEventListener('click', function(e) {
+        e.preventDefault(); // Stop immediate jump
+        const targetUrl = this.href;
+
+        // 1. Add loading state
+        this.classList.add('processing');
+        const originalText = this.textContent;
+        this.textContent = "Connecting...";
+        
+        // 2. Cycle messages for "slow load" feel (4 seconds total)
+        setTimeout(() => { this.textContent = "Handshaking..."; }, 1200);
+        setTimeout(() => { this.textContent = "Encrypting..."; }, 2400);
+        setTimeout(() => { this.textContent = "Launching..."; }, 3500);
+
+        // 3. Redirect after 4 seconds
+        setTimeout(() => {
+          window.location.href = targetUrl;
+          
+          // Reset button incase user hits 'back'
+          setTimeout(() => {
+            this.classList.remove('processing');
+            this.textContent = originalText;
+          }, 1500);
+        }, 4000);
+      });
+    }
   });
 
   // Skip button: hide overlay immediately (no redirect)
