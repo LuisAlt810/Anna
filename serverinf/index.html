@@ -1,277 +1,353 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Incredibox Community Server</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Incredibox Community — Landing</title>
 <style>
-:root{
-  --bg:#020617;
-  --card:#020617;
-  --accent:#22d3ee;
-  --accent2:#7c3aed;
-  --text:#e5e7eb;
-}
+  :root{
+    --bg1:#071021; --bg2:#020617;
+    --accent1:#22d3ee; --accent2:#7c3aed;
+    --card: rgba(255,255,255,0.03);
+    --glass: rgba(255,255,255,0.04);
+    --muted: rgba(255,255,255,0.72);
+  }
 
-*{box-sizing:border-box}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family: Inter, "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial;
+    background: linear-gradient(135deg,var(--bg1),var(--bg2));
+    color:#eef2ff;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    line-height:1.45;
+  }
 
-body{
-  margin:0;
-  background:linear-gradient(135deg,#020617,#020617,#0f172a);
-  color:var(--text);
-  font-family:Segoe UI,system-ui,Arial;
-}
+  /* layout */
+  .wrap{max-width:1100px;margin:36px auto;padding:20px}
+  .grid{display:grid;grid-template-columns:1fr 360px;gap:22px}
+  @media (max-width:920px){ .grid{grid-template-columns:1fr} }
 
-/* ---------- MAIN ---------- */
-.container{
-  max-width:1100px;
-  margin:40px auto;
-  padding:24px;
-}
+  .card{
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-radius:12px;padding:22px;box-shadow:0 12px 36px rgba(2,6,23,0.6);
+    border:1px solid rgba(255,255,255,0.03);
+  }
 
-.card{
-  background:rgba(255,255,255,0.03);
-  border-radius:16px;
-  padding:28px;
-  box-shadow:0 10px 40px rgba(0,0,0,.6);
-}
+  .title{font-size:1.8rem;font-weight:700;display:flex;align-items:center;gap:12px}
+  .subtitle{margin-top:8px;color:var(--muted)}
+  .desc{margin-top:16px;white-space:pre-wrap;opacity:0.95;font-size:0.98rem}
 
-h1{
-  font-size:2rem;
-}
+  /* disco lights */
+  .disco {
+    position:relative;height:80px;margin-top:18px;pointer-events:none;
+  }
+  .light{
+    position:absolute;top:-20px;width:160px;height:160px;border-radius:50%;
+    filter:blur(28px);opacity:0.18;mix-blend-mode:screen;
+    animation: float 6s ease-in-out infinite;
+  }
+  .light.l1{left:-40px;background:linear-gradient(45deg,#ff6b6b,#ffb86b);animation-delay:0s}
+  .light.l2{left:140px;background:linear-gradient(45deg,#7c3aed,#22d3ee);animation-delay:1.2s}
+  .light.l3{left:340px;background:linear-gradient(45deg,#34d399,#60a5fa);animation-delay:2.1s}
+  @keyframes float{0%{transform:translateY(0)}50%{transform:translateY(-10px)}100%{transform:translateY(0)}}
 
-.desc{
-  margin-top:18px;
-  white-space:pre-wrap;
-  line-height:1.6;
-}
+  /* music bars */
+  .bars{display:flex;gap:8px;align-items:flex-end;margin-top:12px;height:72px}
+  .bar{width:10px;border-radius:8px;background:linear-gradient(180deg,var(--accent1),var(--accent2));transform-origin:bottom;animation:bounce 1.6s infinite ease-in-out}
+  .bar:nth-child(1){animation-delay:0s;height:60%}
+  .bar:nth-child(2){animation-delay:0.12s;height:88%}
+  .bar:nth-child(3){animation-delay:0.28s;height:44%}
+  .bar:nth-child(4){animation-delay:0.42s;height:82%}
+  .bar:nth-child(5){animation-delay:0.6s;height:62%}
+  @keyframes bounce{0%{transform:scaleY(0.3)}40%{transform:scaleY(1)}80%{transform:scaleY(0.5)}100%{transform:scaleY(0.35)}}
 
-/* ---------- JOIN BUTTON ---------- */
-.join-btn{
-  margin-top:30px;
-  padding:14px 32px;
-  border:none;
-  border-radius:999px;
-  background:linear-gradient(90deg,var(--accent),var(--accent2));
-  color:#020617;
-  font-size:1.05rem;
-  font-weight:700;
-  cursor:pointer;
-  transition:.3s;
-}
+  /* join button */
+  .join-row{margin-top:20px;display:flex;gap:12px;align-items:center}
+  .join-btn{
+    padding:12px 26px;border-radius:999px;border:none;background:linear-gradient(90deg,var(--accent1),var(--accent2));
+    color:#021025;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;
+  }
+  .join-btn:hover{transform:translateY(-3px);transition:transform .18s}
 
-.join-btn:hover{
-  transform:translateY(-3px);
-}
+  .tiny{font-size:0.88rem;color:var(--muted)}
 
-/* ---------- ADMIN READ ONLY ---------- */
-.admin{
-  margin-top:30px;
-  background:rgba(255,255,255,0.02);
-  padding:18px;
-  border-radius:12px;
-}
+  /* right column admin */
+  .admin h3{font-size:1.02rem;margin-bottom:6px}
+  .panel{background:var(--card);padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.02)}
+  .label{font-size:0.86rem;color:var(--muted);margin-bottom:8px}
+  .list{max-height:280px;overflow:auto;padding-right:6px}
+  .item{background:var(--glass);padding:8px;margin-top:8px;border-radius:8px;font-size:0.94rem;color:#e6eef8;border:1px solid rgba(255,255,255,0.02)}
 
-.admin h3{
-  margin-top:0;
-}
+  .readonly-note{font-size:0.85rem;color:rgba(255,255,255,0.6);margin-top:8px}
 
-.invite{
-  background:rgba(255,255,255,0.04);
-  padding:8px;
-  margin:6px 0;
-  border-radius:8px;
-  font-size:.9rem;
-}
+  /* overlay loader (page load) */
+  .overlay{
+    position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(180deg, rgba(2,6,23,0.78), rgba(2,6,23,0.78));
+    z-index:9999;backdrop-filter: blur(4px);
+  }
+  .loader{
+    width:min(720px,94%);background:linear-gradient(180deg,#061122,#042033);padding:24px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);text-align:center;
+  }
+  .vinyl{width:110px;height:110px;border-radius:50%;margin:6px auto 8px;border:8px solid rgba(255,255,255,0.04);background: conic-gradient(#0000 8%, rgba(255,255,255,0.03) 60%);position:relative;animation:spin 5.5s linear infinite}
+  .vinyl::after{content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:20px;height:20px;border-radius:50%;background:#fff5;border:4px solid rgba(0,0,0,0.6)}
+  @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 
-/* ---------- OVERLAY LOADER ---------- */
-.overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(2,6,23,.85);
-  backdrop-filter:blur(6px);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  opacity:0;
-  visibility:hidden;
-  transition:.3s;
-  z-index:9999;
-}
+  .loader-title{font-weight:800;font-size:1.05rem;color:#dff9ff}
+  .loader-sub{font-size:0.95rem;color:rgba(255,255,255,0.75);margin-top:6px}
 
-.overlay.show{
-  opacity:1;
-  visibility:visible;
-}
+  .terminal{background:#000;border-radius:10px;padding:12px;margin-top:14px;font-family:monospace;color:#22d3ee;text-align:left;min-height:120px;max-height:180px;overflow:auto}
+  .term-line{margin:6px 0;font-size:0.95rem}
+  .term-ok{color:#7ef5a0}
+  .term-warn{color:#ffd479}
 
-.loader-box{
-  width:90%;
-  max-width:520px;
-  background:#020617;
-  border-radius:16px;
-  padding:26px;
-  box-shadow:0 20px 60px rgba(0,0,0,.8);
-}
+  .progress{width:100%;height:12px;background:rgba(255,255,255,0.04);border-radius:999px;overflow:hidden;margin-top:14px}
+  .progress > i{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--accent1),var(--accent2));transition:width .6s linear}
 
-.terminal{
-  background:#000;
-  border-radius:10px;
-  padding:14px;
-  font-family:monospace;
-  font-size:.95rem;
-  line-height:1.5;
-  color:#22d3ee;
-  min-height:180px;
-}
-
-.cursor{
-  display:inline-block;
-  width:8px;
-  height:16px;
-  background:#22d3ee;
-  animation:blink 1s infinite;
-  vertical-align:middle;
-}
-
-@keyframes blink{
-  50%{opacity:0}
-}
-
-.progress{
-  margin-top:14px;
-  height:10px;
-  background:#020617;
-  border-radius:999px;
-  overflow:hidden;
-}
-
-.progress span{
-  display:block;
-  height:100%;
-  width:0%;
-  background:linear-gradient(90deg,var(--accent),var(--accent2));
-  transition:width .6s linear;
-}
-
-.small{
-  margin-top:10px;
-  font-size:.85rem;
-  opacity:.7;
-}
+  .fallback{margin-top:10px;font-size:0.9rem;color:rgba(255,255,255,0.7)}
+  a.fallback-link{color:var(--accent1);text-decoration:none}
+  /* small */
+  .muted{color:var(--muted);font-size:0.92rem}
 </style>
 </head>
-
 <body>
 
-<div class="container">
-  <div class="card">
-    <h1>🎵✨ Welcome to the Incredibox Community Server! ✨🎵</h1>
+<div class="wrap">
+  <div class="grid">
+    <!-- LEFT -->
+    <div class="card">
+      <div class="title">🎵✨ Welcome to the Incredibox Community Server! ✨🎵</div>
+      <div class="subtitle">Are you a fan of Incredibox? Then you’ve just found your new favorite place to hang out! 😎🎧</div>
 
-    <div class="desc">
-Are you a fan of Incredibox? Then you’ve just found your new favorite place to hang out! 😎🎧
+      <!-- disco lights -->
+      <div class="disco" aria-hidden="true">
+        <div class="light l1"></div>
+        <div class="light l2"></div>
+        <div class="light l3"></div>
+      </div>
 
-🎨 Show off your art – Whether it’s fan art, animations, or designs inspired by Incredibox, we love seeing your creativity!
+      <div class="desc">
+🎨 Show off your art – Whether it’s fan art, animations, or designs inspired by Incredibox, we love  seeing your creativity!
 🛠️ Make mods for Incredibox – Share your custom beats, experiments, and unique mods with other passionate fans.
 💬 Chat with amazing members – Meet new friends, exchange tips, or just hang out and talk about your favorite tracks.
 🌟 Connect with famous creators – Sometimes you’ll even get to chat with people who make the community truly legendary.
-🎉 Participate in events & challenges – Fun contests, collaborative projects, and exclusive community activities.
-🎶 Share your music vibes – Create, remix, or just vibe.
-✨ Discover & learn – Tips, tricks, tutorials, and resources.
+🎉 Participate in events & challenges – Fun contests, collaborative projects, and exclusive community activities to keep things exciting.
+🎶 Share your music vibes – Whether you create, remix, or just love to listen, this is the perfect place to celebrate sound.
+✨ Discover & learn – Tips, tricks, tutorials, and all the resources you need to level up your Incredibox experience.
 
-Writer And designer: Luisthegoat7301 on discord  
-Server Owner: zelda_life  
+Writer And designer: Luisthegoat7301 on discord
+Server Owner: zelda_life
 
-Staff Team:  
-♢ 8-BitBowserJr7432 ✨, TotallyNotLuis…, .𖥔 ݁ ˖Ciber-lotl✦ ‧₊˚ ⋅, Chill One, Epic 666, *Hex*, Karma (Wick),
-kingjayjungle♰, LizardLuver_123, Mistral Bakugo, CrimsonVRC, Rocket Raccoon,
-𝚂𝙽𝙸𝙿𝙴𝚁💣, Vash, Vaporwave Mew
+Staff Team: ♢ 8-BitBowserJr7432 ✨, TotallyNotLuis… , .𖥔 ݁ ˖Ciber-lotl✦ ‧₊˚ ⋅, Chill One, Epic 666, *Hex*, Karma (Wick), kingjayjungle♰, LizardLuver_123, Mistral Bakugo, CrimsonVRC, Rocket Raccoon, 𝚂𝙽𝙸𝙿𝙴𝚁💣, Vash, Vaporwave Mew
 
-Feel free to DM luisthegoat7301 (24/7) or zelda_life!
+Feel free to DM luisthegoat7301 (always active) or zelda_life !
+      </div>
+
+      <!-- music bars -->
+      <div class="bars" aria-hidden="true" style="margin-top:18px">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+      </div>
+
+      <div class="join-row">
+        <!-- join opens new tab, no loader tied to this button -->
+        <a class="join-btn" id="joinBtn" href="https://discord.gg/incredibox?invitedlink=luisdiko14-lab?github" target="_blank" rel="noopener noreferrer">Join the Discord 🎶</a>
+        <div class="tiny">Opens Discord invite in a new tab (no page loader).</div>
+      </div>
+
+      <div style="margin-top:14px" class="muted">
+        <strong>Note:</strong> A page loader runs once on load to give a polished entry experience. The admin panel on the right is read-only and safe.
+      </div>
     </div>
 
-    <button class="join-btn" id="joinBtn">Join the Discord 🎧</button>
+    <!-- RIGHT -->
+    <aside>
+      <div class="panel card">
+        <h3>🔒 Admin Panel (Read-Only)</h3>
+        <div class="label">Invited Users (display only)</div>
+        <div class="list" id="inviteList" aria-live="polite">
+          <!-- filled by JS; sample entries if none -->
+        </div>
+        <div class="readonly-note">This is intentionally non-editable: no inputs, no password fields, no modifications. To manage invites securely, use a backend (I can add one).</div>
+      </div>
 
-    <div class="admin">
-      <h3>🔒 Admin Panel (Read-Only)</h3>
-      <div class="invite">friend1@example.com (sample)</div>
-      <div class="invite">beatmaker@musiclab.io (sample)</div>
-      <div class="invite">modder123@mods.net (sample)</div>
-      <div class="small">Display-only. No edits. No credentials.</div>
-    </div>
+      <div style="margin-top:12px" class="panel card">
+        <h3>🧭 Server Info</h3>
+        <div class="label">Owner</div>
+        <div class="item">zelda_life</div>
+
+        <div style="margin-top:8px" class="label">Writer & Designer</div>
+        <div class="item">Luisthegoat7301</div>
+
+        <div style="margin-top:8px" class="label">Staff Team</div>
+        <div class="item" style="white-space:pre-wrap;">
+♢ 8-BitBowserJr7432 ✨
+TotallyNotLuis…
+.𖥔 ݁ ˖Ciber-lotl✦ ‧₊˚ ⋅
+Chill One
+Epic 666
+*Hex*
+Karma (Wick)
+kingjayjungle♰
+LizardLuver_123
+Mistral Bakugo
+CrimsonVRC
+Rocket Raccoon
+𝚂𝙽𝙸𝙿𝙴𝚁💣
+Vash
+Vaporwave Mew
+        </div>
+      </div>
+    </aside>
   </div>
 </div>
 
-<!-- ---------- LOADER ---------- -->
-<div class="overlay" id="overlay">
-  <div class="loader-box">
-    <div class="terminal" id="terminal"></div>
-    <div class="progress"><span id="bar"></span></div>
-    <div class="small">Preparing redirect to Discord…</div>
+<!-- OVERLAY: page-load loader -->
+<div id="overlay" class="overlay" aria-hidden="true" style="display:flex">
+  <div class="loader" role="dialog" aria-modal="true" aria-label="Loading page">
+    <div class="loader-title">Preparing your Incredibox experience…</div>
+    <div class="vinyl" aria-hidden="true"></div>
+    <div class="loader-sub">Hang tight — getting everything in sync ✨</div>
+
+    <div class="terminal" id="terminal" aria-live="polite">
+      <!-- lines appended by JS -->
+    </div>
+
+    <div class="progress" aria-hidden="true"><i id="progressBar"></i></div>
+    <div class="fallback" style="margin-top:10px">If loading stalls, <a class="fallback-link" href="#" id="skipBtn">click here to continue</a>.</div>
   </div>
 </div>
 
 <script>
-const INVITE =
-"https://discord.gg/incredibox?invitedlink=luisdiko14-lab?github";
+  // Page-load-only loader with fixed 10s timeline:
+  //  0 - 3s: Loading modules...
+  //  3 - 6s: Checking for code issues...
+  //  6 - 8s: Checking for issues...
+  //  8 -10s: Loading webpage...
+  // After 10s overlay hides automatically (no redirect)
+  const overlay = document.getElementById('overlay');
+  const term = document.getElementById('terminal');
+  const prog = document.getElementById('progressBar');
+  const skip = document.getElementById('skipBtn');
+  const INVITE = "https://discord.gg/incredibox?invitedlink=luisdiko14-lab?github";
 
-const joinBtn = document.getElementById("joinBtn");
-const overlay = document.getElementById("overlay");
-const terminal = document.getElementById("terminal");
-const bar = document.getElementById("bar");
+  // Safely populate read-only invites (display only)
+  (function loadInvites(){
+    const container = document.getElementById('inviteList');
+    let list = [];
+    try {
+      const raw = localStorage.getItem('invites');
+      if(raw){
+        const parsed = JSON.parse(raw);
+        if(Array.isArray(parsed) && parsed.length) list = parsed.slice(0,200);
+      }
+    } catch(e){}
+    if(list.length === 0){
+      const samples = ["friend1@example.com","beatmaker@musiclab.io","modder123@mods.net"];
+      samples.forEach(s => {
+        const d = document.createElement('div'); d.className='item'; d.textContent = s + ' (sample)'; container.appendChild(d);
+      });
+      const note = document.createElement('div'); note.className='item'; note.style.opacity='.9'; note.style.marginTop='8px';
+      note.textContent = "No invites found locally. To manage invites securely use a backend.";
+      container.appendChild(note);
+    } else {
+      list.forEach(e => { const d = document.createElement('div'); d.className='item'; d.textContent = e; container.appendChild(d); });
+    }
+  })();
 
-function line(text){
-  terminal.innerHTML += text + "<br>";
-  terminal.scrollTop = terminal.scrollHeight;
-}
+  // helper: append terminal line
+  function line(text, cls){
+    const div = document.createElement('div');
+    div.className = 'term-line' + (cls ? ' ' + cls : '');
+    div.textContent = text;
+    term.appendChild(div);
+    term.scrollTop = term.scrollHeight;
+  }
 
-joinBtn.onclick = () => {
-  overlay.classList.add("show");
-  terminal.innerHTML = "";
-  bar.style.width = "0%";
+  // show overlay on page load
+  function startLoader() {
+    overlay.style.display = 'flex';
+    prog.style.width = '0%';
+    term.innerHTML = '';
+    // timeline:
+    // t=0
+    line("> Initializing environment...");
+    setTimeout(()=> {
+      line("> Loading modules...");
+      prog.style.width = '8%';
+    }, 200);
 
-  // Step 1 – 3s
-  line("> Loading modules...");
-  setTimeout(()=>{
-    line("> Modules loaded ✔");
-    bar.style.width="30%";
-  },3000);
+    // modules finish at 3s
+    setTimeout(()=> {
+      line("> Modules loaded ✔");
+      prog.style.width = '30%';
+    }, 3000);
 
-  // Step 2 – 3s
-  setTimeout(()=>{
-    line("> Checking for code issues...");
-  },3000);
+    // start checking code issues at 3s
+    setTimeout(()=> {
+      line("> Checking for code issues...");
+    }, 3000);
 
-  setTimeout(()=>{
-    line("> No code issues found ✔");
-    bar.style.width="60%";
-  },6000);
+    // finish code issues at 6s
+    setTimeout(()=> {
+      line("> No code issues found ✔");
+      prog.style.width = '60%';
+    }, 6000);
 
-  // Step 3 – 2s
-  setTimeout(()=>{
-    line("> Checking for issues...");
-  },6000);
+    // start checking issues at 6s
+    setTimeout(()=> {
+      line("> Checking for issues...");
+    }, 6000);
 
-  setTimeout(()=>{
-    line("> No issues detected ✔");
-    bar.style.width="80%";
-  },8000);
+    // finish checking issues at 8s
+    setTimeout(()=> {
+      line("> No issues detected ✔");
+      prog.style.width = '80%';
+    }, 8000);
 
-  // Step 4 – 2s
-  setTimeout(()=>{
-    line("> Loading webpage...");
-  },8000);
+    // start loading webpage at 8s
+    setTimeout(()=> {
+      line("> Loading webpage...");
+    }, 8000);
 
-  setTimeout(()=>{
-    line("> Done. Redirecting…");
-    bar.style.width="100%";
-  },10000);
+    // finish at 10s
+    setTimeout(()=> {
+      line("> Complete. Enjoy the server! 🎧");
+      prog.style.width = '100%';
+    }, 10000);
 
-  // Redirect at 10s
-  setTimeout(()=>{
-    window.location.href = INVITE;
-  },10200);
-};
+    // hide overlay at 10.3s
+    setTimeout(()=> {
+      overlay.style.display = 'none';
+      overlay.setAttribute('aria-hidden','true');
+    }, 10300);
+  }
+
+  // Start on DOMContentLoaded
+  document.addEventListener('DOMContentLoaded', () => {
+    // slight initial delay so page assets paint first (feels smoother)
+    setTimeout(startLoader, 220);
+  });
+
+  // Skip button: hide overlay immediately (no redirect)
+  skip.addEventListener('click', (e) => {
+    e.preventDefault();
+    overlay.style.display = 'none';
+    overlay.setAttribute('aria-hidden','true');
+  });
+
+  // Accessibility: allow ESC to close loader
+  document.addEventListener('keydown', (ev) => {
+    if(ev.key === 'Escape' && overlay.style.display !== 'none'){
+      overlay.style.display = 'none';
+      overlay.setAttribute('aria-hidden','true');
+    }
+  });
 </script>
 
 </body>
