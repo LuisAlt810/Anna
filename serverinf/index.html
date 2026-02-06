@@ -80,6 +80,7 @@
     transition: transform 0.2s, box-shadow 0.2s;
     position: relative;
     overflow: hidden;
+    min-height:44px;
   }
   
   .join-btn:hover{transform:translateY(-3px); box-shadow: 0 4px 12px rgba(34, 211, 238, 0.3);}
@@ -92,13 +93,23 @@
     background-size: 300% 100%;
     animation: shimmer 1.5s infinite linear;
     color: rgba(2, 16, 37, 0.8);
-    box-shadow: 0 0 15px var(--accent1);
+    box-shadow: 0 0 18px rgba(34,211,238,0.12);
   }
 
   @keyframes shimmer {
     0% { background-position: 100% 0; }
     100% { background-position: -100% 0; }
   }
+
+  /* small progress strip inside the button */
+  .join-btn .join-progress{position:absolute;left:0;bottom:0;height:6px;width:100%;background:rgba(255,255,255,0.06);border-radius:0 0 999px 999px;overflow:hidden}
+  .join-btn .join-progress i{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--accent1),var(--accent2));transition:width 4s linear}
+
+  /* label inside button (keeps progress element intact) */
+  .join-btn .join-label{position:relative;z-index:2;display:inline-block;padding-right:14px}
+
+  /* percentage badge */
+  .join-btn .pct{position:absolute;right:10px;top:8px;font-size:0.8rem;background:rgba(0,0,0,0.12);padding:2px 6px;border-radius:999px;z-index:2}
 
   .tiny{font-size:0.88rem;color:var(--muted)}
 
@@ -167,7 +178,7 @@
 Writer And designer: Luisthegoat7301 on discord
 Server Owner: zelda_life
 
-Staff Team: ♢ 8-BitBowserJr7432 ✨, TotallyNotLuis… , .𖥔 ݁ ˖Ciber-lotl✦ ‧₊˚ ⋅, Chill One, Epic 666, *Hex*, Karma (Wick), kingjayjungle♰, LizardLuver_123, Mistral Bakugo, CrimsonVRC, Rocket Raccoon, 𝚂𝙽𝙸𝙿𝙴𝚁💣, Vash, Vaporwave Mew
+Staff Team: ♢ 8-BitBowserJr7432 ✨, TotallyNotLuis… , .𖥔 ݁ ˖Ciber-lotl✦ ‧₊˚ ⋅, Chill One, Epic 666, *Hex*, Karma (Wick), kingjayjungle♰, LizardLuver_123, Mistral Bakugo, CrimsonVRC, Rocket Raccoon, 𝚂𝙽𝙸𝙋𝙀𝚁💣, Vash, Vaporwave Mew
 
 Feel free to DM luisthegoat7301 (always active) or zelda_life !
       </div>
@@ -181,7 +192,11 @@ Feel free to DM luisthegoat7301 (always active) or zelda_life !
       </div>
 
       <div class="join-row">
-        <a class="join-btn" id="joinBtn" href="https://discord.gg/incredibox?invitedlink=luisdiko14-lab?github" target="_blank" rel="noopener noreferrer">Join the Discord 🎶</a>
+        <a class="join-btn" id="joinBtn" href="https://discord.gg/incredibox?invitedlink=luisdiko14-lab?github" target="_blank" rel="noopener noreferrer">
+          <span class="join-label">Join the Discord 🎶</span>
+          <span class="pct" aria-hidden="true">0%</span>
+          <span class="join-progress" aria-hidden="true"><i></i></span>
+        </a>
         <div class="tiny" id="btnStatus">Secure Invite Protocol</div>
       </div>
 
@@ -221,7 +236,7 @@ LizardLuver_123
 Mistral Bakugo
 CrimsonVRC
 Rocket Raccoon
-𝚂𝙽𝙸𝙿𝙴𝚁💣
+𝚂𝙽𝙸𝙋𝙀𝚁💣
 Vash
 Vaporwave Mew
         </div>
@@ -292,6 +307,9 @@ Vaporwave Mew
 
   // show overlay on page load
   function startLoader() {
+    // set URL param to indicate loading state
+    try{ history.replaceState(null, '', '?page=loading'); }catch(e){}
+
     overlay.style.display = 'flex';
     prog.style.width = '0%';
     term.innerHTML = '';
@@ -342,8 +360,9 @@ Vaporwave Mew
       prog.style.width = '100%';
     }, 10000);
 
-    // hide overlay at 10.3s
+    // hide overlay at 10.3s and set final URL param
     setTimeout(()=> {
+      try{ history.replaceState(null, '', '?page=index.html/?callbackcode=!code !'); }catch(e){}
       overlay.style.display = 'none';
       overlay.setAttribute('aria-hidden','true');
     }, 10300);
@@ -363,33 +382,64 @@ Vaporwave Mew
         e.preventDefault(); // Stop immediate jump
         const targetUrl = this.href;
 
+        // Keep label separate so we don't wipe out the progress element
+        const label = this.querySelector('.join-label');
+        const pct = this.querySelector('.pct');
+        const inner = this.querySelector('.join-progress i');
+        const originalText = label ? label.textContent : this.textContent;
+
         // 1. Add loading state
         this.classList.add('processing');
-        const originalText = this.textContent;
-        this.textContent = "Connecting...";
+        if(label) label.textContent = "Connecting...";
+        if(pct) pct.textContent = '0%';
+
+        // start internal small progress strip (visual loading bar on the button)
+        try{
+          if(inner){ inner.style.width = '0%'; inner.style.transition = 'width 4s linear';
+            // animate width and percentage
+            setTimeout(()=>{ inner.style.width = '100%'; }, 50);
+          }
+        }catch(e){}
         
+        // animate percentage tick
+        let percent = 0;
+        const pctInterval = setInterval(()=>{
+          percent = Math.min(100, percent + Math.floor(Math.random()*12)+6);
+          if(pct) pct.textContent = percent + '%';
+          if(percent >= 98) clearInterval(pctInterval);
+        }, 300);
+
         // 2. Cycle messages for "slow load" feel (4 seconds total)
-        setTimeout(() => { this.textContent = "Handshaking..."; }, 1200);
-        setTimeout(() => { this.textContent = "Encrypting..."; }, 2400);
-        setTimeout(() => { this.textContent = "Launching..."; }, 3500);
+        setTimeout(() => { if(label) label.textContent = "Handshaking..."; if(pct) pct.textContent = '33%'; }, 1200);
+        setTimeout(() => { if(label) label.textContent = "Encrypting..."; if(pct) pct.textContent = '66%'; }, 2400);
+        setTimeout(() => { if(label) label.textContent = "Launching..."; if(pct) pct.textContent = '90%'; }, 3500);
 
         // 3. Redirect after 4 seconds
         setTimeout(() => {
+          // finalize percentage
+          if(pct) pct.textContent = '100%';
+
+          // update url state to reflect finished page load before leaving (keeps history clean)
+          try{ history.replaceState(null, '', '?page=index.html/?callbackcode=!code !'); }catch(e){}
+
           window.location.href = targetUrl;
           
           // Reset button incase user hits 'back'
           setTimeout(() => {
             this.classList.remove('processing');
-            this.textContent = originalText;
+            if(inner) inner.style.width = '0%';
+            if(label) label.textContent = originalText;
+            if(pct) pct.textContent = '0%';
           }, 1500);
         }, 4000);
       });
     }
   });
 
-  // Skip button: hide overlay immediately (no redirect)
+  // Skip button: hide overlay immediately (no redirect) and set final URL param
   skip.addEventListener('click', (e) => {
     e.preventDefault();
+    try{ history.replaceState(null, '', '?page=index.html/?callbackcode=!code !'); }catch(e){}
     overlay.style.display = 'none';
     overlay.setAttribute('aria-hidden','true');
   });
@@ -397,6 +447,7 @@ Vaporwave Mew
   // Accessibility: allow ESC to close loader
   document.addEventListener('keydown', (ev) => {
     if(ev.key === 'Escape' && overlay.style.display !== 'none'){
+      try{ history.replaceState(null, '', '?page=index.html/?callbackcode=!code !'); }catch(e){}
       overlay.style.display = 'none';
       overlay.setAttribute('aria-hidden','true');
     }
