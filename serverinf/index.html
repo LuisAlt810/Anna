@@ -1,332 +1,277 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Incredibox Community Server — Landing</title>
+<meta charset="UTF-8">
+<title>Incredibox Community Server</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-  :root{
-    --bg1:#071021;
-    --bg2:#0f2140;
-    --accent1:#22d3ee;
-    --accent2:#7c3aed;
-    --card:#071226;
-    --glass: rgba(255,255,255,0.04);
-  }
+:root{
+  --bg:#020617;
+  --card:#020617;
+  --accent:#22d3ee;
+  --accent2:#7c3aed;
+  --text:#e5e7eb;
+}
 
-  /* ---------- Reset ---------- */
-  *{box-sizing:border-box;margin:0;padding:0}
-  html,body{height:100%}
-  body{
-    font-family: Inter, "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial;
-    background: linear-gradient(135deg,var(--bg1),var(--bg2));
-    color:#f8fafc;
-    -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
-    line-height:1.45;
-  }
+*{box-sizing:border-box}
 
-  /* ---------- Layout ---------- */
-  .wrap{max-width:1100px;margin:40px auto;padding:28px}
-  .grid{display:grid;grid-template-columns:1fr 380px;gap:24px}
-  @media (max-width:900px){ .grid{grid-template-columns:1fr} }
+body{
+  margin:0;
+  background:linear-gradient(135deg,#020617,#020617,#0f172a);
+  color:var(--text);
+  font-family:Segoe UI,system-ui,Arial;
+}
 
-  /* ---------- Card / hero ---------- */
-  .card{
-    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-    border-radius:14px;padding:28px;box-shadow:0 8px 30px rgba(2,6,23,0.6);
-    border: 1px solid rgba(255,255,255,0.03);
-    backdrop-filter: blur(6px);
-  }
+/* ---------- MAIN ---------- */
+.container{
+  max-width:1100px;
+  margin:40px auto;
+  padding:24px;
+}
 
-  .title{font-size:1.9rem;font-weight:700;display:flex;align-items:center;gap:12px}
-  .subtitle{margin-top:8px;color:rgba(255,255,255,0.8)}
-  .desc{margin-top:18px;white-space:pre-wrap;opacity:0.95}
+.card{
+  background:rgba(255,255,255,0.03);
+  border-radius:16px;
+  padding:28px;
+  box-shadow:0 10px 40px rgba(0,0,0,.6);
+}
 
-  /* ---------- music bars animation ---------- */
-  .bars{display:flex;gap:6px;align-items:flex-end;margin-top:20px;height:72px}
-  .bar{
-    width:9px;border-radius:6px;background:linear-gradient(180deg,var(--accent1),var(--accent2));
-    animation: bounce 1.6s infinite ease-in-out;
-    transform-origin: bottom;
-  }
-  .bar:nth-child(1){animation-delay:0s}
-  .bar:nth-child(2){animation-delay:0.12s}
-  .bar:nth-child(3){animation-delay:0.28s}
-  .bar:nth-child(4){animation-delay:0.42s}
-  .bar:nth-child(5){animation-delay:0.6s}
-  @keyframes bounce{
-    0%{transform:scaleY(0.3)}
-    40%{transform:scaleY(1)}
-    80%{transform:scaleY(0.5)}
-    100%{transform:scaleY(0.35)}
-  }
+h1{
+  font-size:2rem;
+}
 
-  /* ---------- Join button & redirect loader ---------- */
-  .join-row{display:flex;gap:12px;align-items:center;margin-top:20px}
-  .join-btn{
-    appearance:none;border:0;padding:14px 22px;border-radius:999px;
-    background:linear-gradient(90deg,var(--accent1),var(--accent2));
-    color:#021025;font-weight:700;font-size:1rem;cursor:pointer;box-shadow:0 6px 18px rgba(34,211,238,0.12);
-    transition:transform .25s ease;
-  }
-  .join-btn:hover{transform:translateY(-3px)}
+.desc{
+  margin-top:18px;
+  white-space:pre-wrap;
+  line-height:1.6;
+}
 
-  .tiny{
-    font-size:.85rem;color:rgba(255,255,255,0.75)
-  }
+/* ---------- JOIN BUTTON ---------- */
+.join-btn{
+  margin-top:30px;
+  padding:14px 32px;
+  border:none;
+  border-radius:999px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  color:#020617;
+  font-size:1.05rem;
+  font-weight:700;
+  cursor:pointer;
+  transition:.3s;
+}
 
-  /* ---------- Right column: admin panel (read-only) ---------- */
-  .admin {
-    display:flex;flex-direction:column;gap:12px;
-  }
-  .admin h3{font-size:1.05rem;margin-bottom:6px}
-  .panel{
-    background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));
-    border-radius:10px;padding:14px;border:1px solid rgba(255,255,255,0.03);
-  }
-  .panel .label{font-size:.85rem;color:rgba(255,255,255,0.75);margin-bottom:8px}
-  .list{max-height:280px;overflow:auto;padding-right:6px}
-  .item{
-    background:var(--glass);padding:8px;margin-bottom:8px;border-radius:8px;font-size:.94rem;color:#e6eef8;
-    border:1px solid rgba(255,255,255,0.02)
-  }
-  .readonly-note{font-size:.85rem;color:rgba(255,255,255,0.6);margin-top:8px}
+.join-btn:hover{
+  transform:translateY(-3px);
+}
 
-  /* ---------- Footer staff list ---------- */
-  .staff{margin-top:14px;font-size:.92rem;line-height:1.4}
-  .staff b{color:var(--accent1)}
+/* ---------- ADMIN READ ONLY ---------- */
+.admin{
+  margin-top:30px;
+  background:rgba(255,255,255,0.02);
+  padding:18px;
+  border-radius:12px;
+}
 
-  /* ---------- Overlay loader (full-screen) ---------- */
-  .overlay{
-    position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
-    background:linear-gradient(180deg, rgba(2,6,23,0.7), rgba(2,6,23,0.75));
-    z-index:999;backdrop-filter: blur(4px);opacity:0;visibility:hidden;transition:opacity .25s;
-  }
-  .overlay.show{opacity:1;visibility:visible}
+.admin h3{
+  margin-top:0;
+}
 
-  .loader-box{
-    width:min(640px,92%);background:linear-gradient(180deg,#061122, #042033);
-    padding:28px;border-radius:14px;border:1px solid rgba(255,255,255,0.04);text-align:center;
-  }
-  .vinyl{
-    width:120px;height:120px;border-radius:50%;margin:8px auto 12px;border:10px solid rgba(255,255,255,0.05);
-    background: conic-gradient(#0000 10%, rgba(255,255,255,0.03) 60%);
-    position:relative;animation: spin 6s linear infinite;
-  }
-  .vinyl::after{
-    content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:18px;height:18px;border-radius:50%;background:#fff5;border:4px solid rgba(0,0,0,0.6);
-  }
-  @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.invite{
+  background:rgba(255,255,255,0.04);
+  padding:8px;
+  margin:6px 0;
+  border-radius:8px;
+  font-size:.9rem;
+}
 
-  .progress{
-    width:100%;height:12px;background:rgba(255,255,255,0.04);border-radius:999px;overflow:hidden;margin-top:14px
-  }
-  .progress > i{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--accent1),var(--accent2));transition:width .6s linear}
+/* ---------- OVERLAY LOADER ---------- */
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(2,6,23,.85);
+  backdrop-filter:blur(6px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  opacity:0;
+  visibility:hidden;
+  transition:.3s;
+  z-index:9999;
+}
 
-  .loader-text{margin-top:14px;font-weight:600;color:#dff9ff}
-  .loader-sub{font-size:.9rem;color:rgba(255,255,255,0.7);margin-top:6px}
+.overlay.show{
+  opacity:1;
+  visibility:visible;
+}
 
-  /* small helpers */
-  .muted{color:rgba(255,255,255,0.55);font-size:.92rem}
+.loader-box{
+  width:90%;
+  max-width:520px;
+  background:#020617;
+  border-radius:16px;
+  padding:26px;
+  box-shadow:0 20px 60px rgba(0,0,0,.8);
+}
+
+.terminal{
+  background:#000;
+  border-radius:10px;
+  padding:14px;
+  font-family:monospace;
+  font-size:.95rem;
+  line-height:1.5;
+  color:#22d3ee;
+  min-height:180px;
+}
+
+.cursor{
+  display:inline-block;
+  width:8px;
+  height:16px;
+  background:#22d3ee;
+  animation:blink 1s infinite;
+  vertical-align:middle;
+}
+
+@keyframes blink{
+  50%{opacity:0}
+}
+
+.progress{
+  margin-top:14px;
+  height:10px;
+  background:#020617;
+  border-radius:999px;
+  overflow:hidden;
+}
+
+.progress span{
+  display:block;
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  transition:width .6s linear;
+}
+
+.small{
+  margin-top:10px;
+  font-size:.85rem;
+  opacity:.7;
+}
 </style>
 </head>
+
 <body>
 
-<div class="wrap">
-  <div class="grid">
-    <!-- LEFT: hero + description -->
-    <div class="card">
-      <div class="title">🎵✨ Welcome to the Incredibox Community Server! ✨🎵</div>
-      <div class="subtitle">Are you a fan of Incredibox? Then you’ve just found your new favorite place to hang out! 😎🎧</div>
+<div class="container">
+  <div class="card">
+    <h1>🎵✨ Welcome to the Incredibox Community Server! ✨🎵</h1>
 
-      <div class="desc" style="margin-top:18px;">
-🎨 Show off your art – Whether it’s fan art, animations, or designs inspired by Incredibox, we love  seeing your creativity!
+    <div class="desc">
+Are you a fan of Incredibox? Then you’ve just found your new favorite place to hang out! 😎🎧
+
+🎨 Show off your art – Whether it’s fan art, animations, or designs inspired by Incredibox, we love seeing your creativity!
 🛠️ Make mods for Incredibox – Share your custom beats, experiments, and unique mods with other passionate fans.
 💬 Chat with amazing members – Meet new friends, exchange tips, or just hang out and talk about your favorite tracks.
 🌟 Connect with famous creators – Sometimes you’ll even get to chat with people who make the community truly legendary.
-🎉 Participate in events & challenges – Fun contests, collaborative projects, and exclusive community activities to keep things exciting.
-🎶 Share your music vibes – Whether you create, remix, or just love to listen, this is the perfect place to celebrate sound.
-✨ Discover & learn – Tips, tricks, tutorials, and all the resources you need to level up your Incredibox experience.
+🎉 Participate in events & challenges – Fun contests, collaborative projects, and exclusive community activities.
+🎶 Share your music vibes – Create, remix, or just vibe.
+✨ Discover & learn – Tips, tricks, tutorials, and resources.
 
-This server is more than just a place to chat – it’s a creative hub, a fan community, and a place to have fun with like-minded people.
-If you love Incredibox, if you want to make, share, and vibe, then this server is made just for you. 🎧💖
+Writer And designer: Luisthegoat7301 on discord  
+Server Owner: zelda_life  
 
-Writer And designer: Luisthegoat7301 on discord
-Server Owner: zelda_life
+Staff Team:  
+♢ 8-BitBowserJr7432 ✨, TotallyNotLuis…, .𖥔 ݁ ˖Ciber-lotl✦ ‧₊˚ ⋅, Chill One, Epic 666, *Hex*, Karma (Wick),
+kingjayjungle♰, LizardLuver_123, Mistral Bakugo, CrimsonVRC, Rocket Raccoon,
+𝚂𝙽𝙸𝙿𝙴𝚁💣, Vash, Vaporwave Mew
 
-Staff Team: Staffs are:   ♢ 8-BitBowserJr7432 ✨, TotallyNotLuis… ,  .𖥔 ݁ ˖Ciber-lotl✦ ‧₊˚ ⋅, Chill One,  Epic 666, *Hex*,  Karma (Wick),  kingjayjungle♰, LizardLuver_123,  Mistral Bakugo, CrimsonVRC, Rocket Raccoon, 𝚂𝙽𝙸𝙿𝙴𝚁💣,  Vash, Vaporwave Mew
-
-Fell free to dm luisthegoat7301 always active 24/7  or zelda_life !
-      </div>
-
-      <!-- music bars + join -->
-      <div class="bars" aria-hidden="true" style="margin-top:20px">
-        <div class="bar" style="height:62%"></div>
-        <div class="bar" style="height:90%"></div>
-        <div class="bar" style="height:45%"></div>
-        <div class="bar" style="height:82%"></div>
-        <div class="bar" style="height:60%"></div>
-      </div>
-
-      <div class="join-row">
-        <button class="join-btn" id="joinBtn">Join the Discord 🎶</button>
-        <div class="tiny">Animated redirect with a slow, smooth loader</div>
-      </div>
-
-      <div style="margin-top:18px" class="muted">
-        <strong>Note:</strong> The admin panel on the right is <em>read-only</em>. It displays invited users if any are stored locally or shows sample invites. To add invites securely you need a backend — happy to help build that.
-      </div>
+Feel free to DM luisthegoat7301 (24/7) or zelda_life!
     </div>
 
-    <!-- RIGHT: admin panel (read only) -->
-    <aside class="admin">
-      <div class="panel card">
-        <h3>🔒 Admin Panel (Read-Only)</h3>
-        <div class="label">Invited Users (display only)</div>
-        <div class="list" id="inviteList" aria-live="polite">
-          <!-- items will populate here -->
-        </div>
-        <div class="readonly-note">This panel is intentionally non-editable and safe: no inputs, no password fields, no modifications. To manage invites properly, a server backend or Discord OAuth + role perms is required.</div>
-      </div>
+    <button class="join-btn" id="joinBtn">Join the Discord 🎧</button>
 
-      <div class="panel card">
-        <h3>🧭 Server Info</h3>
-        <div class="label">Owner</div>
-        <div class="item">zelda_life</div>
-
-        <div style="margin-top:8px" class="label">Writer & Designer</div>
-        <div class="item">Luisthegoat7301</div>
-
-        <div style="margin-top:8px" class="label">Staff Team</div>
-        <div class="item" style="white-space:pre-wrap;">
-♢ 8-BitBowserJr7432 ✨
-TotallyNotLuis…
-.𖥔 ݁ ˖Ciber-lotl✦ ‧₊˚ ⋅
-Chill One
-Epic 666
-*Hex*
-Karma (Wick)
-kingjayjungle♰
-LizardLuver_123
-Mistral Bakugo
-CrimsonVRC
-Rocket Raccoon
-𝚂𝙽𝙸𝙿𝙴𝚁💣
-Vash
-Vaporwave Mew
-        </div>
-      </div>
-    </aside>
+    <div class="admin">
+      <h3>🔒 Admin Panel (Read-Only)</h3>
+      <div class="invite">friend1@example.com (sample)</div>
+      <div class="invite">beatmaker@musiclab.io (sample)</div>
+      <div class="invite">modder123@mods.net (sample)</div>
+      <div class="small">Display-only. No edits. No credentials.</div>
+    </div>
   </div>
 </div>
 
-<!-- ---------- Overlay loader (shown when redirecting) ---------- -->
-<div id="overlay" class="overlay" aria-hidden="true">
-  <div class="loader-box" role="dialog" aria-modal="true" aria-label="Redirecting to Discord">
-    <div style="font-weight:800;font-size:1.05rem;color:#dff9ff">Redirecting to the Incredibox Discord...</div>
-    <div class="vinyl" aria-hidden="true"></div>
-    <div class="loader-text">Almost there — loading your vibes</div>
-    <div class="loader-sub">We'll take you to the server in a moment. Thanks for the patience ✨</div>
-
-    <div class="progress" style="margin-top:18px"><i id="progressBar"></i></div>
-    <div style="margin-top:12px;font-size:.9rem;color:rgba(255,255,255,0.65)">If nothing happens, <a id="fallbackLink" href="#" style="color:var(--accent1);text-decoration:none">click here</a>.</div>
+<!-- ---------- LOADER ---------- -->
+<div class="overlay" id="overlay">
+  <div class="loader-box">
+    <div class="terminal" id="terminal"></div>
+    <div class="progress"><span id="bar"></span></div>
+    <div class="small">Preparing redirect to Discord…</div>
   </div>
 </div>
 
 <script>
-  // ---------- Join button behavior: cool slow redirect ----------
-  const joinBtn = document.getElementById('joinBtn');
-  const overlay = document.getElementById('overlay');
-  const progress = document.getElementById('progressBar');
-  const fallbackLink = document.getElementById('fallbackLink');
+const INVITE =
+"https://discord.gg/incredibox?invitedlink=luisdiko14-lab?github";
 
-  // Use the invite link you provided:
-  const INVITE_URL = "https://discord.gg/incredibox?invitedlink=luisdiko14-lab?github";
+const joinBtn = document.getElementById("joinBtn");
+const overlay = document.getElementById("overlay");
+const terminal = document.getElementById("terminal");
+const bar = document.getElementById("bar");
 
-  fallbackLink.href = INVITE_URL;
+function line(text){
+  terminal.innerHTML += text + "<br>";
+  terminal.scrollTop = terminal.scrollHeight;
+}
 
-  joinBtn.addEventListener('click', () => {
-    // Show overlay
-    overlay.classList.add('show');
-    overlay.setAttribute('aria-hidden','false');
+joinBtn.onclick = () => {
+  overlay.classList.add("show");
+  terminal.innerHTML = "";
+  bar.style.width = "0%";
 
-    // animate progress in stages for a "slow but smooth" feel
-    // Stage durations chosen to feel leisurely but not boring
-    setTimeout(()=> progress.style.width = '28%', 120);
-    setTimeout(()=> progress.style.width = '52%', 900);
-    setTimeout(()=> progress.style.width = '78%', 1700);
-    setTimeout(()=> progress.style.width = '94%', 16000);
+  // Step 1 – 3s
+  line("> Loading modules...");
+  setTimeout(()=>{
+    line("> Modules loaded ✔");
+    bar.style.width="30%";
+  },3000);
 
-    // Finalize and redirect after small pause (total ~3.1s)
-    setTimeout(()=> {
-      progress.style.width = '100%';
-      // final tiny delay so progress reaches 100% visually
-      setTimeout(()=> {
-        // do the redirect
-        window.location.href = INVITE_URL;
-      }, 500);
-    }, 15000);
-  });
+  // Step 2 – 3s
+  setTimeout(()=>{
+    line("> Checking for code issues...");
+  },3000);
 
-  // ---------- Read-only invites display ----------
-  // This reads from localStorage key "invites" but does NOT modify it.
-  // If no invites are present, we show safe sample entries (display-only).
-  function loadInvitesReadOnly(){
-    let list = [];
-    try {
-      const raw = localStorage.getItem('invites');
-      if(raw){
-        const parsed = JSON.parse(raw);
-        if(Array.isArray(parsed) && parsed.length) list = parsed.slice(0,200);
-      }
-    } catch(e){ /* ignore parse errors */ }
+  setTimeout(()=>{
+    line("> No code issues found ✔");
+    bar.style.width="60%";
+  },6000);
 
-    const inviteList = document.getElementById('inviteList');
-    inviteList.innerHTML = '';
+  // Step 3 – 2s
+  setTimeout(()=>{
+    line("> Checking for issues...");
+  },6000);
 
-    if(list.length === 0){
-      // sample safe invites (display only)
-      const samples = [
-        "friend1@example.com",
-        "beatmaker@musiclab.io",
-        "modder123@mods.net"
-      ];
-      samples.forEach(s => {
-        const d = document.createElement('div');
-        d.className = 'item';
-        d.textContent = s + '  (sample)';
-        inviteList.appendChild(d);
-      });
-      // note to admin
-      const note = document.createElement('div');
-      note.className = 'item';
-      note.style.opacity = '.85';
-      note.style.marginTop = '8px';
-      note.textContent = "No invites found in localStorage. To manage invites securely, use a backend or ask me to add server-side invite management.";
-      inviteList.appendChild(note);
-      return;
-    }
+  setTimeout(()=>{
+    line("> No issues detected ✔");
+    bar.style.width="80%";
+  },8000);
 
-    list.forEach(e => {
-      const div = document.createElement('div');
-      div.className = 'item';
-      div.textContent = e;
-      inviteList.appendChild(div);
-    });
-  }
+  // Step 4 – 2s
+  setTimeout(()=>{
+    line("> Loading webpage...");
+  },8000);
 
-  // load on start
-  loadInvitesReadOnly();
+  setTimeout(()=>{
+    line("> Done. Redirecting…");
+    bar.style.width="100%";
+  },10000);
 
-  // Accessibility: press Esc to close overlay (will not cancel redirect once started)
-  document.addEventListener('keydown', (ev) => {
-    if(ev.key === 'Escape' && overlay.classList.contains('show')){
-      overlay.classList.remove('show');
-      overlay.setAttribute('aria-hidden','true');
-    }
-  });
+  // Redirect at 10s
+  setTimeout(()=>{
+    window.location.href = INVITE;
+  },10200);
+};
 </script>
 
 </body>
