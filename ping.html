@@ -148,7 +148,7 @@
         if (step < bars.length) {
             let progress = 0;
             const interval = setInterval(() => {
-                progress += Math.random() * 18;
+                progress += Math.random() * 1;
                 bars[step].style.width = Math.min(progress, 100) + "%";
 
                 if (progress >= 100) {
@@ -157,7 +157,7 @@
                     document.getElementById("status").innerText = statuses[step] || "Connection stable.";
                     setTimeout(loadNext, 400);
                 }
-            }, 120);
+            }, 1000);
         } else {
             document.getElementById("status").innerText = "✅ Anna is online and responding.";
         }
