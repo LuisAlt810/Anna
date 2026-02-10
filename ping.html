@@ -148,7 +148,7 @@
         if (step < bars.length) {
             let progress = 0;
             const interval = setInterval(() => {
-                progress += Math.random() * 1;
+                progress += Math.random() * 3.5;
                 bars[step].style.width = Math.min(progress, 100) + "%";
 
                 if (progress >= 100) {
