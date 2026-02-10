@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Pinging Anna…</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+        margin: 0;
+        height: 100vh;
+        background: radial-gradient(circle at top, #0a0f1f, #02040a);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #fff;
+        overflow: hidden;
+    }
+
+    .container {
+        width: 420px;
+        padding: 30px;
+        border-radius: 18px;
+        background: rgba(10, 15, 40, 0.75);
+        box-shadow: 0 0 40px rgba(0, 170, 255, 0.35);
+        text-align: center;
+        animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    h1 {
+        margin: 0 0 10px;
+        font-size: 26px;
+        letter-spacing: 1px;
+    }
+
+    .status {
+        font-size: 14px;
+        opacity: 0.85;
+        margin-bottom: 25px;
+    }
+
+    .bars {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .bar {
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 8px;
+        overflow: hidden;
+        height: 16px;
+        position: relative;
+    }
+
+    .bar span {
+        display: block;
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, #00b7ff, #6affff);
+        box-shadow: 0 0 10px #00c8ff;
+        transition: width 0.4s ease;
+    }
+
+    .label {
+        font-size: 12px;
+        margin-top: 4px;
+        text-align: left;
+        opacity: 0.8;
+    }
+
+    .pulse {
+        margin-top: 25px;
+        font-size: 13px;
+        color: #7de3ff;
+        animation: pulse 1.4s infinite;
+    }
+
+    @keyframes pulse {
+        0% { opacity: 0.3; }
+        50% { opacity: 1; }
+        100% { opacity: 0.3; }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>🔗 Pinging Anna</h1>
+    <div class="status" id="status">Initializing modules…</div>
+
+    <div class="bars">
+        <div>
+            <div class="bar"><span id="bar1"></span></div>
+            <div class="label">Core Systems</div>
+        </div>
+        <div>
+            <div class="bar"><span id="bar2"></span></div>
+            <div class="label">Network Handler</div>
+        </div>
+        <div>
+            <div class="bar"><span id="bar3"></span></div>
+            <div class="label">AI Interface</div>
+        </div>
+        <div>
+            <div class="bar"><span id="bar4"></span></div>
+            <div class="label">Security Layer</div>
+        </div>
+        <div>
+            <div class="bar"><span id="bar5"></span></div>
+            <div class="label">Heartbeat Monitor</div>
+        </div>
+    </div>
+
+    <div class="pulse">Waiting for response…</div>
+</div>
+
+<script>
+    const bars = [
+        document.getElementById("bar1"),
+        document.getElementById("bar2"),
+        document.getElementById("bar3"),
+        document.getElementById("bar4"),
+        document.getElementById("bar5")
+    ];
+
+    const statuses = [
+        "Booting core systems…",
+        "Establishing secure connection…",
+        "Syncing AI modules…",
+        "Verifying permissions…",
+        "Pinging Anna…"
+    ];
+
+    let step = 0;
+
+    function loadNext() {
+        if (step < bars.length) {
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 18;
+                bars[step].style.width = Math.min(progress, 100) + "%";
+
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    step++;
+                    document.getElementById("status").innerText = statuses[step] || "Connection stable.";
+                    setTimeout(loadNext, 400);
+                }
+            }, 120);
+        } else {
+            document.getElementById("status").innerText = "✅ Anna is online and responding.";
+        }
+    }
+
+    loadNext();
+</script>
+
+</body>
+</html>
