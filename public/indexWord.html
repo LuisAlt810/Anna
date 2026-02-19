@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cool Embedded Wordwall</title>
+
+<style>
+  /* page reset */
+  body, html { margin: 0; padding: 0; width: 100%; height: 100%; }
+
+  /* Loader background */
+  #loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #0f0f0f;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99;
+    flex-direction: column;
+    color: #fff;
+    font-family: Arial, sans-serif;
+  }
+
+  /* Spinner */
+  #spinner {
+    width: 60px;
+    height: 60px;
+    border: 6px solid #444;
+    border-top: 6px solid #0af;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 14px;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  /* Hide iframe until loaded */
+  #frameContainer {
+    display: none;
+    padding: 20px;
+    text-align: center;
+  }
+
+  iframe {
+    width: 100%;
+    max-width: 500px;
+    height: 380px;
+    border: none;
+  }
+</style>
+</head>
+
+<body>
+
+<!-- Loading Screen -->
+<div id="loader">
+  <div id="spinner"></div>
+  <div>Loading content…</div>
+</div>
+
+<!-- Iframe Container -->
+<div id="frameContainer">
+  <iframe 
+    src="https://wordwall.net/embed/93681db6e72b4adfaf23d4e7e9ce598b?themeId=1&templateId=38&fontStackId=0"
+    allowfullscreen>
+  </iframe>
+</div>
+
+<script>
+  // Wait for iframe to be fully ready
+  const iframe = document.querySelector("iframe");
+
+  iframe.onload = () => {
+    document.getElementById("loader").style.display = "none";
+    document.getElementById("frameContainer").style.display = "block";
+  };
+</script>
+
+</body>
+</html>
