@@ -3,85 +3,97 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cool Embedded Wordwall</title>
+<title>Wordwall Game</title>
 
 <style>
-  /* page reset */
-  body, html { margin: 0; padding: 0; width: 100%; height: 100%; }
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #0d1117;
+    color: white;
+    overflow: hidden;
+  }
 
-  /* Loader background */
+  /* Fullscreen loader */
   #loader {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: #0f0f0f;
+    inset: 0;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 99;
     flex-direction: column;
-    color: #fff;
-    font-family: Arial, sans-serif;
+    z-index: 1000;
   }
 
-  /* Spinner */
-  #spinner {
-    width: 60px;
-    height: 60px;
-    border: 6px solid #444;
-    border-top: 6px solid #0af;
+  /* Animated glowing circle */
+  .circle {
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
+    border: 6px solid rgba(255,255,255,0.2);
+    border-top: 6px solid #00ffff;
     animation: spin 1s linear infinite;
-    margin-bottom: 14px;
+    margin-bottom: 20px;
   }
 
   @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    to { transform: rotate(360deg); }
   }
 
-  /* Hide iframe until loaded */
-  #frameContainer {
+  /* Loading text */
+  .loading-text {
+    font-size: 20px;
+    letter-spacing: 2px;
+    animation: fade 1.5s infinite alternate;
+  }
+
+  @keyframes fade {
+    from { opacity: 0.4; }
+    to { opacity: 1; }
+  }
+
+  /* Iframe container */
+  #content {
     display: none;
     padding: 20px;
     text-align: center;
-  }
-
-  iframe {
-    width: 100%;
-    max-width: 500px;
-    height: 380px;
-    border: none;
   }
 </style>
 </head>
 
 <body>
 
-<!-- Loading Screen -->
+<!-- Cool Loader -->
 <div id="loader">
-  <div id="spinner"></div>
-  <div>Loading content…</div>
+  <div class="circle"></div>
+  <div class="loading-text">Loading Game...</div>
 </div>
 
-<!-- Iframe Container -->
-<div id="frameContainer">
-  <iframe 
+<!-- Your EXACT iframe -->
+<div id="content">
+  <iframe style="max-width:100%"
     src="https://wordwall.net/embed/93681db6e72b4adfaf23d4e7e9ce598b?themeId=1&templateId=38&fontStackId=0"
+    width="500"
+    height="380"
+    frameborder="0"
     allowfullscreen>
   </iframe>
 </div>
 
 <script>
-  // Wait for iframe to be fully ready
-  const iframe = document.querySelector("iframe");
+  // Smooth fake loading (guaranteed to work)
+  setTimeout(() => {
+    document.getElementById("loader").style.opacity = "0";
+    document.getElementById("loader").style.transition = "0.6s";
+    
+    setTimeout(() => {
+      document.getElementById("loader").style.display = "none";
+      document.getElementById("content").style.display = "block";
+      document.body.style.overflow = "auto";
+    }, 600);
 
-  iframe.onload = () => {
-    document.getElementById("loader").style.display = "none";
-    document.getElementById("frameContainer").style.display = "block";
-  };
+  }, 3000); // 3 seconds loading
 </script>
 
 </body>
