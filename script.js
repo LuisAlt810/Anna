@@ -17,7 +17,7 @@ fetch(API)
       `${data.presence_count || 0} members online`;
 
     // prefer widget's instant_invite, otherwise use the provided invite
-    const inviteUrl = data.instant_invite || FALLBACK_INVITE;
+    const inviteUrl =  FALLBACK_INVITE;
     const joinBtn = document.getElementById("join-btn");
     if (joinBtn) {
       joinBtn.href = inviteUrl;
